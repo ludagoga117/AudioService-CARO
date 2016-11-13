@@ -1,0 +1,200 @@
+package velez.carolina.mp3player;
+
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+
+public class BackgroundAudioService extends Service {
+
+    int num_song;
+    private String nombre[] = {"Afterlife", "Back in black", "Closer"};
+    private Integer songid[] = {
+           // R.raw.afterlife,
+            R.raw.s1,
+            R.raw.back_in_black
+          // R.raw.closer
+
+           /* R.raw.closer,
+            R.raw.cancion2,
+            R.raw.cancion3*/
+    };
+
+    MediaPlayer mediaPlayer;
+    int length;
+
+    Intent notificationIntent;
+    PendingIntent pendingIntent;
+
+    Intent previousIntent;
+    PendingIntent ppreviousIntent;
+
+    Intent playIntent;
+    PendingIntent pplayIntent;
+
+    Intent nextIntent;
+    PendingIntent pnextIntent;
+
+    Intent pauseIntent;
+    PendingIntent ppauseIntent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        length = 0;
+        num_song=0;
+        mediaPlayer = MediaPlayer.create(this, songid[num_song]);
+        mediaPlayer.setLooping(true);
+
+
+        notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.main");
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+
+        previousIntent = new Intent(this, BackgroundAudioService.class);
+        previousIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.previous");
+        ppreviousIntent = PendingIntent.getService(this, 0,
+                previousIntent, 0);
+
+        playIntent = new Intent(this, BackgroundAudioService.class);
+        playIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.play");
+        pplayIntent = PendingIntent.getService(this, 0,
+                playIntent, 0);
+
+        nextIntent = new Intent(this, BackgroundAudioService.class);
+        nextIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
+        pnextIntent = PendingIntent.getService(this, 0,
+                nextIntent, 0);
+
+        pauseIntent = new Intent(this, BackgroundAudioService.class);
+        pauseIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.pause");
+        ppauseIntent = PendingIntent.getService(this, 0,
+                pauseIntent, 0);
+    }
+
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.start") ) {
+            if(!mediaPlayer.isPlaying()){
+                Bundle b = intent.getExtras();
+                if( b != null ){
+                    length = intent.getExtras().getInt("length", 0/*defaultvalue*/);
+                }
+                mediaPlayer.seekTo(length);
+                mediaPlayer.start();
+
+                Notification notification = new NotificationCompat.Builder(this)
+                        .setContentTitle("MP3 player")
+                        .setTicker("MP3 player")
+                        .setContentText(nombre[num_song])
+                        .setSmallIcon(R.mipmap.musica)
+                        .setOngoing(true)
+                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                        .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
+                        .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .build();
+
+                startForeground(9999,notification);
+            }
+
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.pause") ){
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                length = mediaPlayer.getCurrentPosition();
+                playIntent.putExtra("length",length);
+
+                pplayIntent = PendingIntent.getService(this, 0,
+                        playIntent, 0);
+
+                Notification notification = new NotificationCompat.Builder(this)
+                        .setContentTitle("MP3 player")
+                        .setTicker("MP3 player")
+                        .setContentText(nombre[num_song])
+                        .setSmallIcon(R.mipmap.musica)
+                        .setOngoing(true)
+                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                        .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
+                        .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .build();
+
+                startForeground(9999,notification);
+            }
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
+            if(!mediaPlayer.isPlaying()){
+                Bundle b = intent.getExtras();
+                if( b != null ){
+                    length = intent.getExtras().getInt("length", 0/*defaultvalue*/);
+                }
+                mediaPlayer.seekTo(length);
+                mediaPlayer.start();
+
+                Notification notification = new NotificationCompat.Builder(this)
+                        .setContentTitle("MP3 player")
+                        .setTicker("MP3 player")
+                        .setContentText(nombre[num_song])
+                        .setSmallIcon(R.mipmap.musica)
+                        .setOngoing(true)
+                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                        .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
+                        .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .build();
+                startForeground(9999,notification);
+            }
+            //next song
+        } else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.next") ){
+            num_song=num_song+1;
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
+            mediaPlayer.start();
+
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("MP3 player")
+                    .setTicker("MP3 player")
+                    .setContentText(nombre[num_song])
+                    .setSmallIcon(R.mipmap.musica)
+                    .setOngoing(true)
+                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                    .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
+                    .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .build();
+            startForeground(9999,notification);
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ){
+            num_song=num_song-1;
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
+            mediaPlayer.start();
+
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("MP3 player")
+                    .setTicker("MP3 player")
+                    .setContentText(nombre[num_song])
+                    .setSmallIcon(R.mipmap.musica)
+                    .setOngoing(true)
+                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                    .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
+                    .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .build();
+            startForeground(9999,notification);
+        }
+
+
+
+
+
+        return START_STICKY;
+    }
+}
