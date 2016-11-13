@@ -133,6 +133,10 @@ public class BackgroundAudioService extends Service {
 
                 startForeground(9999,notification);
             }
+            // Si se le dio pausa a la notificacion, entonces hay que poner el botón de pausa en la actividad
+            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
+            this.sendBroadcast(i);
+
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
                 Bundle b = intent.getExtras();
@@ -154,6 +158,11 @@ public class BackgroundAudioService extends Service {
                         .build();
                 startForeground(9999,notification);
             }
+
+            // Si se le dio play a la notificacion, entonces hay que poner el botón de play en la actividad
+            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "play");
+            this.sendBroadcast(i);
+
             //next song
         } else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.next") ){
             num_song=num_song+1;
