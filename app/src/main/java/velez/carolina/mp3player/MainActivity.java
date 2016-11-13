@@ -14,16 +14,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private Context context;
+    private String nombre[] = {"Afterlife", "Back in black", "Closer"};
+
 
     //Para reproducir el audio
     Intent intent;
     boolean playing=false;
     ImageView play, next, prev;
+    TextView Titulo_cancion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         context = this;
 
         intent = new Intent(MainActivity.this, BackgroundAudioService.class);
+
+        Titulo_cancion = (TextView) findViewById(R.id.titulo);
+        Titulo_cancion.setText(nombre[0]);
 
         play = (ImageView) findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 intent.setAction("velez.carolina.mp3player.BackgroundAudioService.previous");
                 startService(intent);
+
             }
         });
 
@@ -67,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 intent.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
                 startService(intent);
+
             }
         });
 
@@ -87,8 +96,9 @@ public class MainActivity extends AppCompatActivity {
                 }else if( status.equals("pause") ){
                     playing = false;
                     play.setImageResource(R.mipmap.play);
+                }else{
+                    Titulo_cancion.setText(status);
                 }
-
             }
         }
     };
@@ -110,4 +120,5 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction("android.intent.action.actualizarEstado");
         registerReceiver(ReceivefromService, filter);
     }
+
 }

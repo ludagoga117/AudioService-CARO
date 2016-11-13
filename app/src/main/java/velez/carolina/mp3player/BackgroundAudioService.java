@@ -14,15 +14,7 @@ public class BackgroundAudioService extends Service {
 
     int num_song;
     private String nombre[] = {"Afterlife", "Back in black", "Closer"};
-    private Integer songid[] = {
-           // R.raw.afterlife,
-            R.raw.s1,
-            R.raw.back_in_black
-          // R.raw.closer
-
-           /* R.raw.closer,
-            R.raw.cancion2,
-            R.raw.cancion3*/
+    private Integer songid[] = {R.raw.afterlife, R.raw.back_in_black,R.raw.closer
     };
 
     MediaPlayer mediaPlayer;
@@ -165,10 +157,27 @@ public class BackgroundAudioService extends Service {
 
             //next song
         } else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.next") ){
-            num_song=num_song+1;
             mediaPlayer.release();
-            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
-            mediaPlayer.start();
+            switch (num_song){
+                case 0:
+                    mediaPlayer = MediaPlayer.create(this, songid[1]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=1;
+                    break;
+                case 1:
+                    mediaPlayer = MediaPlayer.create(this, songid[2]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=2;
+                    break;
+                case 2:
+                    mediaPlayer = MediaPlayer.create(this, songid[0]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=0;
+                    break;
+            }
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
@@ -181,11 +190,34 @@ public class BackgroundAudioService extends Service {
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                     .build();
             startForeground(9999,notification);
+
+
+            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
+            this.sendBroadcast(i);
+
+
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ){
-            num_song=num_song-1;
             mediaPlayer.release();
-            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
-            mediaPlayer.start();
+            switch (num_song){
+                case 0:
+                    mediaPlayer = MediaPlayer.create(this, songid[2]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=2;
+                    break;
+                case 1:
+                    mediaPlayer = MediaPlayer.create(this, songid[0]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=0;
+                    break;
+                case 2:
+                    mediaPlayer = MediaPlayer.create(this, songid[1]);
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    num_song=1;
+                    break;
+            }
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
@@ -198,6 +230,10 @@ public class BackgroundAudioService extends Service {
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                     .build();
             startForeground(9999,notification);
+
+            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
+            this.sendBroadcast(i);
+
         }
 
 
