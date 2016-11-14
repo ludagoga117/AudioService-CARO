@@ -15,8 +15,9 @@ import android.support.v4.app.NotificationCompat;
 public class BackgroundAudioService extends Service {
 
     int num_song;
+    boolean circulacion=false;
     private String nombre[] = {"Afterlife", "Back in black", "Closer"};
-    private Integer songid[] = {R.raw.afterlife, R.raw.back_in_black,R.raw.closer
+    private Integer songid[] = {R.raw.s1, R.raw.back_in_black,R.raw.closer
     };
 
     MediaPlayer mediaPlayer;
@@ -46,7 +47,7 @@ public class BackgroundAudioService extends Service {
         length = 0;
         num_song=0;
         mediaPlayer = MediaPlayer.create(this, songid[num_song]);
-        mediaPlayer.setLooping(true);
+      //  mediaPlayer.setLooping(true);
 
         actualizador = new actualizarBarra(this);
 
@@ -159,22 +160,24 @@ public class BackgroundAudioService extends Service {
             switch (num_song){
                 case 0:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     num_song=1;
                     break;
                 case 1:
                     mediaPlayer = MediaPlayer.create(this, songid[2]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     num_song=2;
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(this, songid[0]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     num_song=0;
                     break;
+                default:
+                    mediaPlayer = MediaPlayer.create(this, songid[1]);
+                    mediaPlayer.start();
+                    num_song=1;
+
             }
 
             Notification notification = new NotificationCompat.Builder(this)
@@ -199,22 +202,20 @@ public class BackgroundAudioService extends Service {
             switch (num_song){
                 case 0:
                     mediaPlayer = MediaPlayer.create(this, songid[2]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     num_song=2;
                     break;
                 case 1:
                     mediaPlayer = MediaPlayer.create(this, songid[0]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     num_song=0;
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                    //seekBar.setMax(mediaPlayer.getDuration());
-                    mediaPlayer.start();
+                     mediaPlayer.start();
                     num_song=1;
                     break;
+
             }
 
             Notification notification = new NotificationCompat.Builder(this)
@@ -231,8 +232,11 @@ public class BackgroundAudioService extends Service {
 
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
-
-        }
+        }/*else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
+            circulacion=true;
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.nocirc") ) {
+            circulacion=false;
+        }*/
         return START_STICKY;
     }
 

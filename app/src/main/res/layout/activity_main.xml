@@ -14,8 +14,8 @@
 
     <ImageView
         android:id="@+id/musica"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="50dp"
@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
         android:textSize="25dp"
         android:textColor="#fff"
         android:layout_marginBottom="20dp"
@@ -32,7 +33,8 @@
 
     <SeekBar
         android:id="@+id/SeekBar01"
-        android:layout_width="348dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <LinearLayout
@@ -44,16 +46,11 @@
 
 
 
-        <!--   <ImageView
-                android:id="@+id/nocircular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/sync_off"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"/>
-                -->
-
-
+        <ImageView
+            android:id="@+id/circulacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/sync_off"/>
 
         <ImageView
             android:id="@+id/prev"
@@ -83,13 +80,6 @@
             android:textColor="#fff"
             android:paddingTop="10dp"
             android:id="@+id/tiempo" />
-        <!--<ImageView
-            android:id="@+id/stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/stop"/> -->
-
-
 
     </LinearLayout>
 
