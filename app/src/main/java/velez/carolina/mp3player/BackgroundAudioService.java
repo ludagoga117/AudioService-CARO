@@ -3,9 +3,11 @@ package velez.carolina.mp3player;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -35,6 +37,8 @@ public class BackgroundAudioService extends Service {
     Intent pauseIntent;
     PendingIntent ppauseIntent;
 
+    private actualizarBarra actualizador;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,6 +47,8 @@ public class BackgroundAudioService extends Service {
         num_song=0;
         mediaPlayer = MediaPlayer.create(this, songid[num_song]);
         mediaPlayer.setLooping(true);
+
+        actualizador = new actualizarBarra(this);
 
 
         notificationIntent = new Intent(this, MainActivity.class);
@@ -82,12 +88,9 @@ public class BackgroundAudioService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.start") ) {
             if(!mediaPlayer.isPlaying()){
-                Bundle b = intent.getExtras();
-                if( b != null ){
-                    length = intent.getExtras().getInt("length", 0/*defaultvalue*/);
-                }
                 mediaPlayer.seekTo(length);
                 mediaPlayer.start();
+                actualizador.execute();
 
                 Notification notification = new NotificationCompat.Builder(this)
                         .setContentTitle("MP3 player")
@@ -107,10 +110,8 @@ public class BackgroundAudioService extends Service {
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
                 length = mediaPlayer.getCurrentPosition();
-                playIntent.putExtra("length",length);
-
-                pplayIntent = PendingIntent.getService(this, 0,
-                        playIntent, 0);
+                actualizador.cancel(true);
+                actualizador = new actualizarBarra(this);
 
                 Notification notification = new NotificationCompat.Builder(this)
                         .setContentTitle("MP3 player")
@@ -131,12 +132,9 @@ public class BackgroundAudioService extends Service {
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
-                Bundle b = intent.getExtras();
-                if( b != null ){
-                    length = intent.getExtras().getInt("length", 0/*defaultvalue*/);
-                }
                 mediaPlayer.seekTo(length);
                 mediaPlayer.start();
+                actualizador.execute();
 
                 Notification notification = new NotificationCompat.Builder(this)
                         .setContentTitle("MP3 player")
@@ -235,11 +233,41 @@ public class BackgroundAudioService extends Service {
             this.sendBroadcast(i);
 
         }
-
-
-
-
-
         return START_STICKY;
+    }
+
+    private class actualizarBarra extends AsyncTask<Void, Void, Integer>{
+
+        private Context context;
+
+        public actualizarBarra(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            while( mediaPlayer.isPlaying() ){
+                try {
+                    new Thread().sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if( mediaPlayer.isPlaying() ) {
+                    publishProgress();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            int segundosActuales = mediaPlayer.getCurrentPosition()/1000;
+            int top = mediaPlayer.getDuration()/1000;
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "segundos")
+                    .putExtra("top",top)
+                    .putExtra("segundos",segundosActuales);
+            context.sendBroadcast(i);
+        }
     }
 }

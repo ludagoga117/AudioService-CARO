@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +30,14 @@ public class MainActivity extends AppCompatActivity {
     ImageView play, next, prev;
     TextView Titulo_cancion;
 
+    private SeekBar sb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        sb = (SeekBar) findViewById(R.id.SeekBar01);
 
         intent = new Intent(MainActivity.this, BackgroundAudioService.class);
 
@@ -96,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
                 }else if( status.equals("pause") ){
                     playing = false;
                     play.setImageResource(R.mipmap.play);
+                }else if( status.equals("segundos") ){
+                    int top=intent.getIntExtra("top",0);
+                    int segundos=intent.getIntExtra("segundos",0);
+                    sb.setMax(top);
+                    sb.setProgress(segundos);
                 }else{
                     Titulo_cancion.setText(status);
                 }
