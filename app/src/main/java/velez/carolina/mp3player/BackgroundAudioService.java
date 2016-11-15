@@ -15,7 +15,7 @@ import android.support.v4.app.NotificationCompat;
 public class BackgroundAudioService extends Service {
 
     int num_song;
-    boolean circulacion=false;
+    boolean circulacion;
     private String nombre[] = {"Afterlife", "Back in black", "Closer"};
     private Integer songid[] = {R.raw.s1, R.raw.back_in_black,R.raw.closer
     };
@@ -39,8 +39,41 @@ public class BackgroundAudioService extends Service {
     Intent mainActivityIntent;
     PendingIntent pmainActivityIntent;
 
-
     private actualizarBarra actualizador;
+
+    private void funcionCirculacion(MediaPlayer mp){
+        actualizador.cancel(true);
+        actualizador = new actualizarBarra(this);
+        length = 0;
+
+        int segundosActuales = 0;
+        int top = mp.getDuration()/1000;
+
+        Intent i = new Intent("android.intent.action.actualizarEstado")
+                .putExtra("newstatus", "segundos")
+                .putExtra("top",top)
+                .putExtra("segundos",segundosActuales);
+        sendBroadcast(i);
+
+        if( circulacion ){
+            Intent intent1=new Intent(BackgroundAudioService.this, BackgroundAudioService.class);
+            intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
+            startService(intent1);
+        }else if (!circulacion) {
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    funcionCirculacion(mp);
+                }
+            });
+
+            // Si se le dio pausa a la notificacion, entonces hay que poner el botón de play en la actividad
+            i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
+            this.sendBroadcast(i);
+        }
+    }
 
     @Override
     public void onCreate() {
@@ -48,8 +81,16 @@ public class BackgroundAudioService extends Service {
 
         length = 0;
         num_song=0;
+
+        circulacion = false;
+
         mediaPlayer = MediaPlayer.create(this, songid[num_song]);
-      //  mediaPlayer.setLooping(true);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                funcionCirculacion(mp);
+            }
+        });
 
         actualizador = new actualizarBarra(this);
 
@@ -129,7 +170,7 @@ public class BackgroundAudioService extends Service {
                 //stopForeground(false);
 
             }
-            // Si se le dio pausa a la notificacion, entonces hay que poner el botón de pausa en la actividad
+            // Si se le dio pausa a la notificacion, entonces hay que poner el botón de play en la actividad
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
             this.sendBroadcast(i);
 
@@ -178,7 +219,14 @@ public class BackgroundAudioService extends Service {
                     num_song=1;
 
             }
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    funcionCirculacion(mp);
+                }
+            });
             mediaPlayer.start();
+            actualizador.execute();
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
@@ -219,7 +267,14 @@ public class BackgroundAudioService extends Service {
                     break;
 
             }
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    funcionCirculacion(mp);
+                }
+            });
             mediaPlayer.start();
+            actualizador.execute();
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
@@ -268,11 +323,11 @@ public class BackgroundAudioService extends Service {
                     .putExtra("top",top);
             sendBroadcast(i);
 
-        }/*else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
             circulacion=true;
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.nocirc") ) {
             circulacion=false;
-        }*/
+        }
         return START_STICKY;
     }
 

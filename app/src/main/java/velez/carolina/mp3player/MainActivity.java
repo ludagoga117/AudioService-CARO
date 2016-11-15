@@ -105,24 +105,24 @@ public class MainActivity extends AppCompatActivity {
             intent.setAction("velez.carolina.mp3player.BackgroundAudioService.restaurarValores");
             startService(intent);
         }
-/*
+
         circ=(ImageView) findViewById(R.id.circulacion);
         circ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(circulando==true){
+                if( circulando ){
                     circulando = false;
-                    circ.setImageResource(R.mipmap.sync);
+                    circ.setImageResource(R.mipmap.sync_off);
                     intent.setAction("velez.carolina.mp3player.BackgroundAudioService.nocirc");
                     startService(intent);
-                }else{
+                }else if( !circulando ){
                     circulando = true;
-                    circ.setImageResource(R.mipmap.sync_off);
+                    circ.setImageResource(R.mipmap.sync);
                     intent.setAction("velez.carolina.mp3player.BackgroundAudioService.circ");
                     startService(intent);
                 }
             }
-        });*/
+        });
     }
 
     private BroadcastReceiver ReceivefromService = new BroadcastReceiver(){
@@ -145,12 +145,14 @@ public class MainActivity extends AppCompatActivity {
                     sb.setProgress(segundos);
                     //System.out.println("seg="+segundos);
                     time.setText(milliSecondsToTimer(segundos*1000));
-                    if(segundos>=top){
+                    /*if( segundos>=top && (circulando) ){
                         //System.out.println("fin");
                         Intent intent1=new Intent(context, BackgroundAudioService.class);
                         intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
                         context.startService(intent1);
-                    }
+                    }else if( segundos >= top ){
+
+                    }*/
                 }else if( status.equals("restaurar") ) {
                     int top=intent.getIntExtra("top",0);
                     int segundos=intent.getIntExtra("segundos",0);
