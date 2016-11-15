@@ -121,6 +121,7 @@ public class BackgroundAudioService extends Service {
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .setContentIntent(pmainActivityIntent)
                         .build();
 
                 startForeground(9999,notification);
@@ -146,6 +147,7 @@ public class BackgroundAudioService extends Service {
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .setContentIntent(pmainActivityIntent)
                         .build();
                 startForeground(9999,notification);
             }
@@ -186,6 +188,7 @@ public class BackgroundAudioService extends Service {
                     .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999,notification);
 
@@ -226,6 +229,7 @@ public class BackgroundAudioService extends Service {
                     .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999, notification);
 
