@@ -79,6 +79,7 @@
             android:textSize="25dp"
             android:textColor="#fff"
             android:paddingTop="10dp"
+            android:text="0:00"
             android:id="@+id/tiempo" />
 
     </LinearLayout>

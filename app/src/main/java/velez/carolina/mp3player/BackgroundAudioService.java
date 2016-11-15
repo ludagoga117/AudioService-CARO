@@ -233,13 +233,18 @@ public class BackgroundAudioService extends Service {
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
         }else if ( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.move") ){
-            actualizador.cancel(true);
-            actualizador = new actualizarBarra(this);
-
             length = intent.getIntExtra("newval",0) * 1000;
             mediaPlayer.seekTo(length);
-            mediaPlayer.start();
-            actualizador.execute();
+
+            int segundosActuales = mediaPlayer.getCurrentPosition()/1000;
+            int top = mediaPlayer.getDuration()/1000;
+
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "segundos")
+                    .putExtra("top",top)
+                    .putExtra("segundos",segundosActuales);
+            sendBroadcast(i);
+
         }/*else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
             circulacion=true;
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.nocirc") ) {
