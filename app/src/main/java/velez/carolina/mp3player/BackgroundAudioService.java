@@ -36,6 +36,10 @@ public class BackgroundAudioService extends Service {
     Intent pauseIntent;
     PendingIntent ppauseIntent;
 
+    Intent mainActivityIntent;
+    PendingIntent pmainActivityIntent;
+
+
     private actualizarBarra actualizador;
 
     @Override
@@ -49,6 +53,9 @@ public class BackgroundAudioService extends Service {
 
         actualizador = new actualizarBarra(this);
 
+        mainActivityIntent = new Intent(this, MainActivity.class);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        pmainActivityIntent = PendingIntent.getActivity(this,0,mainActivityIntent,0);
 
         previousIntent = new Intent(this, BackgroundAudioService.class);
         previousIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.previous");
@@ -92,6 +99,7 @@ public class BackgroundAudioService extends Service {
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .setContentIntent(pmainActivityIntent)
                         .build();
 
                 startForeground(9999,notification);
