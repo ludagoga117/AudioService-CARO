@@ -23,8 +23,6 @@ public class BackgroundAudioService extends Service {
     MediaPlayer mediaPlayer;
     int length;
 
-    Intent notificationIntent;
-    PendingIntent pendingIntent;
 
     Intent previousIntent;
     PendingIntent ppreviousIntent;
@@ -50,14 +48,6 @@ public class BackgroundAudioService extends Service {
       //  mediaPlayer.setLooping(true);
 
         actualizador = new actualizarBarra(this);
-
-
-        notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.main");
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
 
 
         previousIntent = new Intent(this, BackgroundAudioService.class);
@@ -98,7 +88,7 @@ public class BackgroundAudioService extends Service {
                         .setTicker("MP3 player")
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
-                        .setOngoing(true)
+                        .setOngoing(false)
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
@@ -119,13 +109,15 @@ public class BackgroundAudioService extends Service {
                         .setTicker("MP3 player")
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
-                        .setOngoing(true)
+                        .setOngoing(false)
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                         .build();
 
                 startForeground(9999,notification);
+                //stopForeground(false);
+
             }
             // Si se le dio pausa a la notificacion, entonces hay que poner el botón de pausa en la actividad
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
@@ -142,7 +134,7 @@ public class BackgroundAudioService extends Service {
                         .setTicker("MP3 player")
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
-                        .setOngoing(true)
+                        .setOngoing(false)
                         .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
@@ -160,32 +152,29 @@ public class BackgroundAudioService extends Service {
             switch (num_song){
                 case 0:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                    mediaPlayer.start();
                     num_song=1;
                     break;
                 case 1:
                     mediaPlayer = MediaPlayer.create(this, songid[2]);
-                    mediaPlayer.start();
                     num_song=2;
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(this, songid[0]);
-                    mediaPlayer.start();
                     num_song=0;
                     break;
                 default:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                    mediaPlayer.start();
                     num_song=1;
 
             }
+            mediaPlayer.start();
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
                     .setTicker("MP3 player")
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
-                    .setOngoing(true)
+                    .setOngoing(false)
                     .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
@@ -196,34 +185,36 @@ public class BackgroundAudioService extends Service {
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
 
+            // Si se le dio siguiente a la notificacion, entonces hay que poner el botón de play en la actividad
+            i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "play");
+            this.sendBroadcast(i);
+
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ) {
             mediaPlayer.release();
             switch (num_song) {
                 case 0:
                     mediaPlayer = MediaPlayer.create(this, songid[2]);
-                    mediaPlayer.start();
                     num_song = 2;
                     break;
                 case 1:
                     mediaPlayer = MediaPlayer.create(this, songid[0]);
-                    mediaPlayer.start();
                     num_song = 0;
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                    mediaPlayer.start();
                     num_song = 1;
                     break;
 
             }
+            mediaPlayer.start();
 
             Notification notification = new NotificationCompat.Builder(this)
                     .setContentTitle("MP3 player")
                     .setTicker("MP3 player")
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
-                    .setOngoing(true)
+                    .setOngoing(false)
                     .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
@@ -232,6 +223,11 @@ public class BackgroundAudioService extends Service {
 
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
+
+            // Si se le dio atras a la notificacion, entonces hay que poner el botón de play en la actividad
+            i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "play");
+            this.sendBroadcast(i);
+
         }else if ( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.move") ){
             length = intent.getIntExtra("newval",0) * 1000;
             mediaPlayer.seekTo(length);

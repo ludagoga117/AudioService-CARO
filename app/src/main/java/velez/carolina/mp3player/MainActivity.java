@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int progress = seekBar.getProgress();
-                Toast.makeText(context, Integer.toString(progress), Toast.LENGTH_SHORT).show();
                 intent.setAction("velez.carolina.mp3player.BackgroundAudioService.move");
                 intent.putExtra("newval",progress);
                 startService(intent);
