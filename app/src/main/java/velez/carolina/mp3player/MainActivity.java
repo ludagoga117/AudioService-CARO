@@ -39,6 +39,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
         sb = (SeekBar) findViewById(R.id.SeekBar01);
+        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                Toast.makeText(context, Integer.toString(progress), Toast.LENGTH_SHORT).show();
+                intent.setAction("velez.carolina.mp3player.BackgroundAudioService.move");
+                intent.putExtra("newval",progress);
+                startService(intent);
+            }
+        });
 
         intent = new Intent(MainActivity.this, BackgroundAudioService.class);
 
@@ -177,5 +195,7 @@ public class MainActivity extends AppCompatActivity {
         // return timer string
         return finalTimerString;
     }
+
+
 
 }

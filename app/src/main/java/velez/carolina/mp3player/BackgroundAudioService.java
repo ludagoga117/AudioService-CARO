@@ -197,23 +197,23 @@ public class BackgroundAudioService extends Service {
             this.sendBroadcast(i);
 
 
-        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ){
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ) {
             mediaPlayer.release();
-            switch (num_song){
+            switch (num_song) {
                 case 0:
                     mediaPlayer = MediaPlayer.create(this, songid[2]);
                     mediaPlayer.start();
-                    num_song=2;
+                    num_song = 2;
                     break;
                 case 1:
                     mediaPlayer = MediaPlayer.create(this, songid[0]);
                     mediaPlayer.start();
-                    num_song=0;
+                    num_song = 0;
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(this, songid[1]);
-                     mediaPlayer.start();
-                    num_song=1;
+                    mediaPlayer.start();
+                    num_song = 1;
                     break;
 
             }
@@ -228,10 +228,18 @@ public class BackgroundAudioService extends Service {
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                     .build();
-            startForeground(9999,notification);
+            startForeground(9999, notification);
 
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
+        }else if ( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.move") ){
+            actualizador.cancel(true);
+            actualizador = new actualizarBarra(this);
+
+            length = intent.getIntExtra("newval",0) * 1000;
+            mediaPlayer.seekTo(length);
+            mediaPlayer.start();
+            actualizador.execute();
         }/*else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
             circulacion=true;
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.nocirc") ) {
@@ -255,6 +263,7 @@ public class BackgroundAudioService extends Service {
                     new Thread().sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    break;
                 }
                 if( mediaPlayer.isPlaying() ) {
                     publishProgress();
