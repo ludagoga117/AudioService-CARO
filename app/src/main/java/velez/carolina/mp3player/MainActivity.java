@@ -143,21 +143,14 @@ public class MainActivity extends AppCompatActivity {
                     int segundos=intent.getIntExtra("segundos",0);
                     sb.setMax(top);
                     sb.setProgress(segundos);
-                    //System.out.println("seg="+segundos);
                     time.setText(milliSecondsToTimer(segundos*1000));
-                    /*if( segundos>=top && (circulando) ){
-                        //System.out.println("fin");
-                        Intent intent1=new Intent(context, BackgroundAudioService.class);
-                        intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
-                        context.startService(intent1);
-                    }else if( segundos >= top ){
-
-                    }*/
                 }else if( status.equals("restaurar") ) {
                     int top=intent.getIntExtra("top",0);
                     int segundos=intent.getIntExtra("segundos",0);
                     playing=intent.getBooleanExtra("isplaying",false);//variable del mainActivity
                     String nombre = intent.getStringExtra("nombre");
+
+                    circulando = intent.getBooleanExtra("iscirculando",false);
 
                     Titulo_cancion.setText(nombre);
                     sb.setMax(top);
@@ -170,6 +163,12 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         //en caso contrario poner pausa
                         play.setImageResource(R.mipmap.pause);
+                    }
+
+                    if( circulando ){
+                        circ.setImageResource(R.mipmap.sync);
+                    }else if( !circulando ){
+                        circ.setImageResource(R.mipmap.sync_off);
                     }
 
                 }else{

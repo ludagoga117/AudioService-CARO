@@ -320,7 +320,8 @@ public class BackgroundAudioService extends Service {
                     .putExtra("nombre",nombre[num_song])
                     .putExtra("isplaying",mediaPlayer.isPlaying())
                     .putExtra("segundos",segundosActuales)
-                    .putExtra("top",top);
+                    .putExtra("top",top)
+                    .putExtra("iscirculando",circulacion);
             sendBroadcast(i);
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
