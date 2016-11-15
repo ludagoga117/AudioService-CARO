@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         context = this;
         sb = (SeekBar) findViewById(R.id.SeekBar01);
@@ -99,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
                     startService(intent);
             }
         });
+
+        if( getIntent().getBooleanExtra("averigueValoresDeCancion",false) ){
+            intent.setAction("velez.carolina.mp3player.BackgroundAudioService.restaurarValores");
+            startService(intent);
+        }
 /*
         circ=(ImageView) findViewById(R.id.circulacion);
         circ.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +151,25 @@ public class MainActivity extends AppCompatActivity {
                         intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
                         context.startService(intent1);
                     }
+                }else if( status.equals("restaurar") ) {
+                    int top=intent.getIntExtra("top",0);
+                    int segundos=intent.getIntExtra("segundos",0);
+                    playing=intent.getBooleanExtra("isplaying",false);//variable del mainActivity
+                    String nombre = intent.getStringExtra("nombre");
+
+                    Titulo_cancion.setText(nombre);
+                    sb.setMax(top);
+                    sb.setProgress(segundos);
+                    time.setText(milliSecondsToTimer(segundos*1000));
+
+                    if(playing==false){
+                        //Si actualmente no esta reproduciendo, poner el simbolo de play
+                        play.setImageResource(R.mipmap.play);
+                    }else{
+                        //en caso contrario poner pausa
+                        play.setImageResource(R.mipmap.pause);
+                    }
+
                 }else{
                     Titulo_cancion.setText(status);
                 }

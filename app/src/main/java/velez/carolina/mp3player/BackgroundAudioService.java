@@ -55,6 +55,7 @@ public class BackgroundAudioService extends Service {
 
         mainActivityIntent = new Intent(this, MainActivity.class);
         mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mainActivityIntent.putExtra("averigueValoresDeCancion",true);
         pmainActivityIntent = PendingIntent.getActivity(this,0,mainActivityIntent,0);
 
         previousIntent = new Intent(this, BackgroundAudioService.class);
@@ -251,6 +252,20 @@ public class BackgroundAudioService extends Service {
                     .putExtra("newstatus", "segundos")
                     .putExtra("top",top)
                     .putExtra("segundos",segundosActuales);
+            sendBroadcast(i);
+
+        }else if ( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.restaurarValores") ){
+            length = mediaPlayer.getCurrentPosition();
+
+            int segundosActuales = mediaPlayer.getCurrentPosition()/1000;
+            int top = mediaPlayer.getDuration()/1000;
+
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "restaurar")
+                    .putExtra("nombre",nombre[num_song])
+                    .putExtra("isplaying",mediaPlayer.isPlaying())
+                    .putExtra("segundos",segundosActuales)
+                    .putExtra("top",top);
             sendBroadcast(i);
 
         }/*else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.circ") ) {
