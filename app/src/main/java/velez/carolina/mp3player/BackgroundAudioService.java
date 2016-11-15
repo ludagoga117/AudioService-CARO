@@ -153,26 +153,27 @@ public class BackgroundAudioService extends Service {
                 length = mediaPlayer.getCurrentPosition();
                 actualizador.cancel(true);
                 actualizador = new actualizarBarra(this);
-
-                Notification notification = new NotificationCompat.Builder(this)
-                        .setContentTitle("MP3 player")
-                        .setTicker("MP3 player")
-                        .setContentText(nombre[num_song])
-                        .setSmallIcon(R.mipmap.musica)
-                        .setOngoing(false)
-                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
-                        .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
-                        .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                        .setContentIntent(pmainActivityIntent)
-                        .build();
-
-                startForeground(9999,notification);
-                //stopForeground(false);
-
             }
+
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("MP3 player")
+                    .setTicker("MP3 player")
+                    .setContentText(nombre[num_song])
+                    .setSmallIcon(R.mipmap.musica)
+                    .setOngoing(false)
+                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
+                    .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
+                    .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .setContentIntent(pmainActivityIntent)
+                    .build();
+
+            //FIXME O se conserva la notificacion o se la mata
+            startForeground(9999,notification);
             // Si se le dio pausa a la notificacion, entonces hay que poner el botón de play en la actividad
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
             this.sendBroadcast(i);
+
+            //stopForeground(false);
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
