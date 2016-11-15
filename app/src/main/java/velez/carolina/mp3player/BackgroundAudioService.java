@@ -39,6 +39,9 @@ public class BackgroundAudioService extends Service {
     Intent mainActivityIntent;
     PendingIntent pmainActivityIntent;
 
+    Intent chaoIntent;
+    PendingIntent pchaoIntent;
+
     private actualizarBarra actualizador;
 
     private void funcionCirculacion(MediaPlayer mp){
@@ -118,6 +121,11 @@ public class BackgroundAudioService extends Service {
         pauseIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.pause");
         ppauseIntent = PendingIntent.getService(this, 0,
                 pauseIntent, 0);
+
+        chaoIntent = new Intent(this, BackgroundAudioService.class);
+        chaoIntent.setAction("velez.carolina.mp3player.BackgroundAudioService.chao");
+        pchaoIntent = PendingIntent.getService(this, 0,
+                chaoIntent, 0);
     }
 
     public IBinder onBind(Intent intent) {
@@ -138,9 +146,9 @@ public class BackgroundAudioService extends Service {
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
                         .setOngoing(false)
-                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                         .setContentIntent(pmainActivityIntent)
                         .build();
 
@@ -161,9 +169,9 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
-                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
 
@@ -174,6 +182,15 @@ public class BackgroundAudioService extends Service {
             this.sendBroadcast(i);
 
             //stopForeground(false);
+
+        }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.chao") ){
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+            actualizador.cancel(true);
+
+            stopForeground(false);
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
@@ -187,9 +204,9 @@ public class BackgroundAudioService extends Service {
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
                         .setOngoing(false)
-                        .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                         .setContentIntent(pmainActivityIntent)
                         .build();
                 startForeground(9999,notification);
@@ -235,9 +252,9 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
-                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999,notification);
@@ -283,9 +300,9 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
-                    .addAction(R.mipmap.left, ""/*"prev"*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999, notification);
