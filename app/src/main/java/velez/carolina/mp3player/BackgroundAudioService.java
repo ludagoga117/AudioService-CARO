@@ -146,9 +146,10 @@ public class BackgroundAudioService extends Service {
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
                         .setOngoing(false)
+                        .addAction(R.mipmap.left, "" /*previous*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
+                        //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                         .setContentIntent(pmainActivityIntent)
                         .build();
 
@@ -169,9 +170,10 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
+                    .addAction(R.mipmap.left, "" /*previous*/, ppreviousIntent)
                     .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
+                    //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
 
@@ -213,9 +215,10 @@ public class BackgroundAudioService extends Service {
                         .setContentText(nombre[num_song])
                         .setSmallIcon(R.mipmap.musica)
                         .setOngoing(false)
+                        .addAction(R.mipmap.left, "" /*previous*/, ppreviousIntent)
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
+                        //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                         .setContentIntent(pmainActivityIntent)
                         .build();
                 startForeground(9999,notification);
@@ -275,9 +278,10 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
+                    .addAction(R.mipmap.left, "" /*previous*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
+                    //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999,notification);
@@ -336,9 +340,10 @@ public class BackgroundAudioService extends Service {
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
                     .setOngoing(false)
+                    .addAction(R.mipmap.left, "" /*previous*/, ppreviousIntent)
                     .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
-                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
+                    //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
                     .setContentIntent(pmainActivityIntent)
                     .build();
             startForeground(9999, notification);
