@@ -184,13 +184,22 @@ public class BackgroundAudioService extends Service {
             //stopForeground(false);
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.chao") ){
-            if(mediaPlayer.isPlaying()){
-                mediaPlayer.stop();
-            }
-            mediaPlayer.release();
             actualizador.cancel(true);
+            actualizador = new actualizarBarra(this);
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "restaurar")
+                    .putExtra("nombre",nombre[0])
+                    .putExtra("isplaying",false)
+                    .putExtra("segundos",0)
+                    .putExtra("top",mediaPlayer.getDuration())
+                    .putExtra("iscirculando",circulacion);
+            sendBroadcast(i);
 
             stopForeground(false);
+            stopSelf();
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
@@ -218,6 +227,20 @@ public class BackgroundAudioService extends Service {
 
             //next song
         } else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.next") ){
+
+            actualizador.cancel(true);
+            actualizador = new actualizarBarra(this);
+            length = 0;
+
+            int segundosActuales = 0;
+            int top = mediaPlayer.getDuration()/1000;
+
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "segundos")
+                    .putExtra("top",top)
+                    .putExtra("segundos",segundosActuales);
+            sendBroadcast(i);
+
             mediaPlayer.release();
             switch (num_song){
                 case 0:
@@ -260,7 +283,7 @@ public class BackgroundAudioService extends Service {
             startForeground(9999,notification);
 
 
-            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
+            i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
 
             // Si se le dio siguiente a la notificacion, entonces hay que poner el botón de play en la actividad
@@ -269,6 +292,19 @@ public class BackgroundAudioService extends Service {
 
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.previous") ) {
+            actualizador.cancel(true);
+            actualizador = new actualizarBarra(this);
+            length = 0;
+
+            int segundosActuales = 0;
+            int top = mediaPlayer.getDuration()/1000;
+
+            Intent i = new Intent("android.intent.action.actualizarEstado")
+                    .putExtra("newstatus", "segundos")
+                    .putExtra("top",top)
+                    .putExtra("segundos",segundosActuales);
+            sendBroadcast(i);
+
             mediaPlayer.release();
             switch (num_song) {
                 case 0:
@@ -307,7 +343,7 @@ public class BackgroundAudioService extends Service {
                     .build();
             startForeground(9999, notification);
 
-            Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
+            i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", nombre[num_song]);
             this.sendBroadcast(i);
 
             // Si se le dio atras a la notificacion, entonces hay que poner el botón de play en la actividad
