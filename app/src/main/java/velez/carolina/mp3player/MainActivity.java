@@ -101,11 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if( getIntent().getBooleanExtra("averigueValoresDeCancion",false) ){
-            intent.setAction("velez.carolina.mp3player.BackgroundAudioService.restaurarValores");
-            startService(intent);
-        }
-
         circ=(ImageView) findViewById(R.id.circulacion);
         circ.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if( getIntent().getBooleanExtra("averigueValoresDeCancion",false) ){
+            intent.setAction("velez.carolina.mp3player.BackgroundAudioService.restaurarValores");
+            startService(intent);
+        }
     }
 
     private BroadcastReceiver ReceivefromService = new BroadcastReceiver(){
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent)
         {
             String status=intent.getStringExtra("newstatus");
-            if( ! MainActivity.this.isFinishing() ){
+            if( ! MainActivity.this.isFinishing() ){ //si no esta cerrada la act
                 if( status.equals("play") ){
                     playing = true;
                     play.setImageResource(R.mipmap.pause);
@@ -179,10 +179,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onPause() {
+    protected void onPause() { // cuando la app no esta en primer plano
         super.onPause();
         try {
-            unregisterReceiver(ReceivefromService);
+            unregisterReceiver(ReceivefromService); // quito el filtro
         } catch (IllegalArgumentException e) {
             Toast.makeText(this,"Problemas soltando el broadcast receiver", Toast.LENGTH_SHORT).show();
         }
@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.actualizarEstado");
-        registerReceiver(ReceivefromService, filter);
+        filter.addAction("android.intent.action.actualizarEstado");// creo el filtro
+        registerReceiver(ReceivefromService, filter); // registro el filtro
     }
     public  String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";

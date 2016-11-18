@@ -45,12 +45,12 @@ public class BackgroundAudioService extends Service {
     private actualizarBarra actualizador;
 
     private void funcionCirculacion(MediaPlayer mp){
-        actualizador.cancel(true);
+        actualizador.cancel(true); // para cancelar la tarea asincrona
         actualizador = new actualizarBarra(this);
         length = 0;
 
         int segundosActuales = 0;
-        int top = mp.getDuration()/1000;
+        int top = mp.getDuration()/1000; //porque esta en msegs
 
         Intent i = new Intent("android.intent.action.actualizarEstado")
                 .putExtra("newstatus", "segundos")
@@ -63,14 +63,21 @@ public class BackgroundAudioService extends Service {
             intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
             startService(intent1);
         }else if (!circulacion) {
-            mediaPlayer.release();
-            mediaPlayer = MediaPlayer.create(this, songid[num_song]);
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    funcionCirculacion(mp);
-                }
-            });
+            if (num_song==2){
+                mediaPlayer.release();
+                mediaPlayer = MediaPlayer.create(this, songid[num_song]);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        funcionCirculacion(mp);
+                    }
+                });
+
+            }else{
+                Intent intent1=new Intent(BackgroundAudioService.this, BackgroundAudioService.class);
+                intent1.setAction("velez.carolina.mp3player.BackgroundAudioService.next");
+                startService(intent1);
+            }
 
             // Si se le dio pausa a la notificacion, entonces hay que poner el botón de play en la actividad
             i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
@@ -89,6 +96,7 @@ public class BackgroundAudioService extends Service {
 
         mediaPlayer = MediaPlayer.create(this, songid[num_song]);
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            // se activa cuando se acaba la cancion
             @Override
             public void onCompletion(MediaPlayer mp) {
                 funcionCirculacion(mp);
@@ -98,7 +106,7 @@ public class BackgroundAudioService extends Service {
         actualizador = new actualizarBarra(this);
 
         mainActivityIntent = new Intent(this, MainActivity.class);
-        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // se va abrir una act si esta cerrada
         mainActivityIntent.putExtra("averigueValoresDeCancion",true);
         pmainActivityIntent = PendingIntent.getActivity(this,0,mainActivityIntent,0);
 
@@ -149,7 +157,7 @@ public class BackgroundAudioService extends Service {
                         .addAction(R.mipmap.pause, ""/*"Pausar"*/, ppauseIntent)
                         .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                         .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
-                        .setContentIntent(pmainActivityIntent)
+                        .setContentIntent(pmainActivityIntent) //para llamar ala act
                         .build();
 
                 startForeground(9999,notification);
@@ -168,7 +176,7 @@ public class BackgroundAudioService extends Service {
                     .setTicker("MP3 player")
                     .setContentText(nombre[num_song])
                     .setSmallIcon(R.mipmap.musica)
-                    .setOngoing(false)
+                    .setOngoing(false) // para permitir que la notificacion se deslice
                     .addAction(R.mipmap.play, ""/*"Reanudar"*/, pplayIntent)
                     .addAction(R.mipmap.rigth, ""/*"next"*/, pnextIntent)
                     .addAction(android.R.drawable.ic_menu_close_clear_cancel, ""/*"next"*/, pchaoIntent)
@@ -176,7 +184,7 @@ public class BackgroundAudioService extends Service {
                     .build();
 
             //FIXME O se conserva la notificacion o se la mata
-            startForeground(9999,notification);
+            startForeground(9999,notification); // sustituyo la notificacion con el id 9999 y le ponemos notificacion
             // Si se le dio pausa a la notificacion, entonces hay que poner el botón de play en la actividad
             Intent i = new Intent("android.intent.action.actualizarEstado").putExtra("newstatus", "pause");
             this.sendBroadcast(i);
@@ -198,8 +206,8 @@ public class BackgroundAudioService extends Service {
                     .putExtra("iscirculando",circulacion);
             sendBroadcast(i);
 
-            stopForeground(false);
-            stopSelf();
+            stopForeground(false);// para que se pare lo que este el segundo plano y se quitar la notificacion
+            stopSelf(); // destruye el servicio
 
         }else if( intent.getAction().equals("velez.carolina.mp3player.BackgroundAudioService.play") ){
             if(!mediaPlayer.isPlaying()){
@@ -387,7 +395,8 @@ public class BackgroundAudioService extends Service {
     }
 
     private class actualizarBarra extends AsyncTask<Void, Void, Integer>{
-
+       // tipos de elementos que entras al doin ackgroung, pogress update,
+//tarea asincrona
         private Context context;
 
         public actualizarBarra(Context context) {
@@ -395,16 +404,16 @@ public class BackgroundAudioService extends Service {
         }
 
         @Override
-        protected Integer doInBackground(Void... params) {
+        protected Integer doInBackground(Void... params) { // arreglo de parametros
             while( mediaPlayer.isPlaying() ){
                 try {
                     new Thread().sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); //on post execute
                     break;
                 }
                 if( mediaPlayer.isPlaying() ) {
-                    publishProgress();
+                    publishProgress(); // llamo al progress update
                 }
             }
             return null;
